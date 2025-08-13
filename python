@@ -1,0 +1,79 @@
+codigo-da-tranformacao-python/
+├── Modulo_09/
+
+  class SaldoInsuficienteErro(Exception):
+    def __init__(self, mensagem="Saldo insuficiente para realizar a operação."):
+        self.mensagem = mensagem
+        super().__init__(self.mensagem)
+
+# Função para validar idade
+def obter_idade():
+    while True:
+        try:
+            idade = int(input("Digite sua idade: "))
+            if idade <= 0:
+                raise ValueError("A idade deve ser um número positivo.")
+            return idade
+        except ValueError as ve:
+            print(f"Erro: {ve}")
+
+# Calculadora com tratamento de divisão por zero
+def calculadora():
+    try:
+        num1 = float(input("Digite o primeiro número: "))
+        operacao = input("Digite a operação (+, -, *, /): ")
+        num2 = float(input("Digite o segundo número: "))
+
+        if operacao == '+':
+            resultado = num1 + num2
+        elif operacao == '-':
+            resultado = num1 - num2
+        elif operacao == '*':
+            resultado = num1 * num2
+        elif operacao == '/':
+            resultado = num1 / num2
+        else:
+            print("Operação inválida.")
+            return
+
+        print("Resultado:", resultado)
+
+    except ZeroDivisionError:
+        print("Erro: Não é possível dividir por zero.")
+    except ValueError:
+        print("Erro: Digite números válidos.")
+
+# Simulação de conta bancária
+class ContaBancaria:
+    def __init__(self, saldo_inicial):
+        self.saldo = saldo_inicial
+
+    def sacar(self, valor):
+        if valor > self.saldo:
+            raise SaldoInsuficienteErro(f"Você tentou sacar R${valor}, mas o saldo é R${self.saldo}.")
+        self.saldo -= valor
+        print(f"Saque de R${valor} realizado com sucesso. Saldo restante: R${self.saldo}")
+
+# Programa principal
+def main():
+    print("Bem-vindo ao sistema!")
+    idade = obter_idade()
+    print(f"Idade registrada: {idade} anos\n")
+
+    print("Calculadora:")
+    calculadora()
+
+    print("\nSimulação de Conta Bancária:")
+    conta = ContaBancaria(1000)  # Saldo inicial de R$1000
+    try:
+        valor_saque = float(input("Digite o valor que deseja sacar: "))
+        conta.sacar(valor_saque)
+    except SaldoInsuficienteErro as e:
+        print(f"Erro: {e}")
+    except ValueError:
+        print("Erro: Digite um valor numérico válido.")
+
+# Executa o programa
+if __name__ == "__main__":
+    main()
+
