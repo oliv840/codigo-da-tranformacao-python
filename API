@@ -1,0 +1,61 @@
+import requests
+import json
+
+# Consumindo a API do OpenWeatherMap
+def get_weather_data(city_name, api_key):
+    """
+    Função para consumir a API do OpenWeatherMap e obter dados de previsão do tempo.
+    """
+    try:
+        base_url = "http://api.openweathermap.org/data/2.5/weather"
+        params = {
+            "q": city_name,
+            "appid": api_key,
+            "units": "metric",  # Para obter temperatura em Celsius
+            "lang": "pt_br"  # Para obter a descrição em português
+        }
+        
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()  # Levanta um erro para códigos de status HTTP ruins (4xx ou 5xx)
+        
+        return response.json()
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Erro de conexão: {e}")
+        return None
+
+# Exibindo informações específicas da API
+def display_weather_info(weather_data):
+    """
+    Função para exibir informações específicas da API de forma organizada.
+    """
+    if weather_data:
+        try:
+            city = weather_data["name"]
+            country = weather_data["sys"]["country"]
+            temperature = weather_data["main"]["temp"]
+            description = weather_data["weather"][0]["description"]
+            humidity = weather_data["main"]["humidity"]
+            wind_speed = weather_data["wind"]["speed"]
+            
+            print(f"--- Condições Climáticas para {city}, {country} ---")
+            print(f"Temperatura: {temperature}°C")
+            print(f"Condição: {description.capitalize()}")
+            print(f"Umidade: {humidity}%")
+            print(f"Velocidade do Vento: {wind_speed} m/s")
+            
+        except KeyError as e:
+            print(f"Erro ao processar os dados recebidos. Chave não encontrada: {e}")
+    else:
+        print("Não foi possível obter os dados de previsão do tempo.")
+
+# Tratamento de erros de conexão
+if __name__ == "__main__":
+    api_key = "SUA_API_KEY_AQUI"  # Substitua pela sua chave da API do OpenWeatherMap
+    city = "São Paulo"
+    
+    if api_key == "SUA_API_KEY_AQUI":
+        print("Por favor, substitua 'SUA_API_KEY_AQUI' pela sua chave de API do OpenWeatherMap.")
+    else:
+        weather_data = get_weather_data(city, api_key)
+        display_weather_info(weather_data)
